@@ -34,7 +34,8 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean build -x pmdMain -x pmdTest -x checkstyleMain -x checkStyleTest -x jacocoTestReport --no-daemon
+        run: ./gradlew clean build --no-daemon
+        # run: ./gradlew clean build -x pmdMain -x pmdTest -x checkstyleMain -x checkStyleTest -x jacocoTestReport --no-daemon
 
       # Run PMD
       #      - name: Run PMD
