@@ -3,6 +3,7 @@ val lombokVersion = "1.18.38"
 val mapstructVersion = "1.6.3"
 val plantUmlVersion = "8059"
 val mysqlConnectorVersion = "8.0.33"
+val h2Version = "2.3.232"
 
 plugins {
 	java
@@ -49,6 +50,7 @@ dependencies {
 
     // DATA STORAGE
     implementation("mysql:mysql-connector-java:${mysqlConnectorVersion}")
+    runtimeOnly("com.h2database:h2:${h2Version}")
 
     // DOCUMENTATION
     implementation("net.sourceforge.plantuml:plantuml:${plantUmlVersion}")
@@ -56,6 +58,7 @@ dependencies {
     // TEST
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
 }
 
 tasks.withType<Test> {

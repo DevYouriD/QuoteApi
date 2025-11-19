@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'develop'
+      - 'main'
   pull_request:
     branches:
       - 'develop'
@@ -11,6 +12,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      IS_MAIN_BRANCH: ${{ github.ref == 'refs/heads/main' }}
 
     steps:
       - name: Checkout code
@@ -52,3 +55,19 @@ jobs:
 #        with:
 #          name: test-results
 #          path: build/reports/tests/test
+
+      - name: Log in to Docker Hub
+        if: env.IS_MAIN_BRANCH == 'true'
+        run: |
+          echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login \
+            -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+      - name: Build Docker image
+        if: env.IS_MAIN_BRANCH == 'true'
+        run: |
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/quote-api:latest .
+
+      - name: Push Docker image
+        if: env.IS_MAIN_BRANCH == 'true'
+        run: |
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/quote-api:latest
