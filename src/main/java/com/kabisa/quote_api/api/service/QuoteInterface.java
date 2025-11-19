@@ -1,6 +1,6 @@
-package com.kabisa.quote_api.service;
+package com.kabisa.quote_api.api.service;
 
-import com.kabisa.quote_api.model.Quote;
+import com.kabisa.quote_api.api.model.dto.Quote;
 import java.util.concurrent.CompletableFuture;
 
 public interface QuoteInterface {

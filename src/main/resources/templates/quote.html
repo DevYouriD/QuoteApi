@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quote</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" th:href="@{/css/rating.css}" />
+</head>
+
+<body class="bg-white text-gray-900 min-h-screen flex flex-col">
+
+<!-- Header -->
+<header class="bg-gray-800 text-white body-font">
+    <div class="container mx-auto relative flex items-center p-5"></div>
+</header>
+
+<!-- Main Content -->
+<main class="flex-grow container mx-auto px-4 py-8 text-center">
+
+    <h1 class="text-3xl font-bold mb-8">Randomly chosen quote</h1>
+    <div class="flex flex-col items-center gap-4">
+
+        <p class="text-2xl italic text-gray-700">
+            “<span th:text="${quote.quote}">Quote</span>”
+        </p>
+
+        <p class="text-lg font-semibold text-gray-900">
+            — <span th:text="${quote.author}">Author</span>
+        </p>
+    </div>
+
+    <div class="mt-10"></div>
+
+    <!-- Rating Form -->
+    <form th:action="@{/rate-quote}" method="post" class="flex flex-col items-center gap-4">
+
+        <h2 class="text-xl font-semibold">Rate this quote</h2>
+
+        <div class="rating">
+            <input type="radio" id="star5" name="starRating" value="5" /><label for="star5">★</label>
+            <input type="radio" id="star4" name="starRating" value="4" /><label for="star4">★</label>
+            <input type="radio" id="star3" name="starRating" value="3" /><label for="star3">★</label>
+            <input type="radio" id="star2" name="starRating" value="2" /><label for="star2">★</label>
+            <input type="radio" id="star1" name="starRating" value="1" /><label for="star1">★</label>
+        </div>
+
+        <input type="hidden" name="quote" th:value="${quote.quote}" />
+        <input type="hidden" name="author" th:value="${quote.author}" />
+
+        <button type="submit" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition duration-200">
+            Submit Rating
+        </button>
+    </form>
+
+</main>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-white text-center text-sm py-4">
+    &copy; 2025 DevYouriD. All rights reserved.
+</footer>
+
+</body>
+</html>

@@ -1,7 +1,7 @@
-package com.kabisa.quote_api.model.mapper;
+package com.kabisa.quote_api.api.model.mapper;
 
-import com.kabisa.quote_api.model.Quote;
-import com.kabisa.quote_api.model.zenquotes.ZenQuote;
+import com.kabisa.quote_api.api.model.dto.Quote;
+import com.kabisa.quote_api.api.model.dto.zenquotes.ZenQuote;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

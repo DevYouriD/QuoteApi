@@ -2,6 +2,7 @@
 val lombokVersion = "1.18.38"
 val mapstructVersion = "1.6.3"
 val plantUmlVersion = "8059"
+val mysqlConnectorVersion = "8.0.33"
 
 plugins {
 	java
@@ -32,12 +33,11 @@ repositories {
 dependencies {
 
     // UTILITY
-	implementation("org.springframework.boot:spring-boot-starter-web")
-    //	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
-	compileOnly("org.projectlombok:lombok:$lombokVersion")
-	annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+    compileOnly("org.projectlombok:lombok:$lombokVersion")
+    annotationProcessor("org.projectlombok:lombok:$lombokVersion")
     implementation("org.mapstruct:mapstruct:$mapstructVersion")
     annotationProcessor("org.mapstruct:mapstruct-processor:$mapstructVersion")
 
@@ -48,7 +48,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
     // DATA STORAGE
-    // implementation("mysql:mysql-connector-java:${mysqlConnectorJavaVersion}")
+    implementation("mysql:mysql-connector-java:${mysqlConnectorVersion}")
 
     // DOCUMENTATION
     implementation("net.sourceforge.plantuml:plantuml:${plantUmlVersion}")
