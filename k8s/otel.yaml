@@ -1,0 +1,76 @@
+########## OpenTelemetry ConfigMap ##########
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-config
+  namespace: quote-api-namespace
+data:
+  otel-collector-config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+    exporters:
+      logging:
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          exporters: [logging]
+---
+
+########## OpenTelemetry Deployment ##########
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otel-collector
+  namespace: quote-api-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otel-collector
+  template:
+    metadata:
+      labels:
+        app: otel-collector
+    spec:
+      containers:
+        - name: otel-collector
+          image: otel/opentelemetry-collector-contrib:latest
+          args: [ "--config=/etc/otel-collector/otel-collector-config.yaml" ]
+          volumeMounts:
+            - name: otel-config
+              mountPath: /etc/otel-collector
+          ports:
+            - containerPort: 4317
+            - containerPort: 4318
+      volumes:
+        - name: otel-config
+          configMap:
+            name: otel-config
+---
+
+########## OpenTelemetry Service ##########
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: otel-collector
+  namespace: quote-api-namespace
+spec:
+  type: ClusterIP
+  selector:
+    app: otel-collector
+  ports:
+    - name: grpc
+      port: 4317
+      targetPort: 4317
+    - name: http
+      port: 4318
+      targetPort: 4318

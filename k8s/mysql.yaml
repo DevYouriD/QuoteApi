@@ -1,0 +1,137 @@
+########## MySQL Secrets Management ##########
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-secret
+  namespace: quote-api-namespace
+type: Opaque
+stringData:
+  MYSQL_ROOT_PASSWORD: root
+  MYSQL_DATABASE: quotedb
+  MYSQL_USER: admin
+  MYSQL_PASSWORD: root
+---
+
+########## MySQL Init SQL ConfigMap ##########
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-initdb
+  namespace: quote-api-namespace
+data:
+  init.sql: |
+    -- Ensure root works from any host
+    ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'root';
+    -- Create database if missing
+    CREATE DATABASE IF NOT EXISTS quotedb;
+    -- Create admin user
+    CREATE USER IF NOT EXISTS 'admin'@'%' IDENTIFIED WITH mysql_native_password BY 'root';
+    GRANT ALL PRIVILEGES ON quotedb.* TO 'admin'@'%';
+    FLUSH PRIVILEGES;
+---
+
+########## Persistent Volume Claim ##########
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+  namespace: quote-api-namespace
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: standard
+---
+
+########## MySQL Deployment ##########
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  namespace: quote-api-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_DATABASE
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_PASSWORD
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: mysql-storage
+            - mountPath: /docker-entrypoint-initdb.d
+              name: mysql-initdb
+              readOnly: true
+          readinessProbe:
+            exec:
+              command: ["mysqladmin","ping","-h","localhost","-u","admin","-proot"]
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 200m
+            limits:
+              memory: 512Mi
+              cpu: 500m
+      volumes:
+        - name: mysql-storage
+          persistentVolumeClaim:
+            claimName: mysql-pvc
+        - name: mysql-initdb
+          configMap:
+            name: mysql-initdb
+---
+
+########## MySQL Service ##########
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: quote-api-namespace
+spec:
+  type: ClusterIP
+  selector:
+    app: mysql
+  ports:
+    - port: 3306
+      targetPort: 3306
