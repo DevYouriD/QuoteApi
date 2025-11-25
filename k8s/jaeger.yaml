@@ -21,6 +21,10 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 16686
+            - containerPort: 14268
+            - containerPort: 4317
+          args:
+            - "--collector.otlp.enabled=true"
 ---
 
 ########## Jaeger Service ##########
@@ -35,6 +39,13 @@ spec:
   selector:
     app: jaeger
   ports:
-    - port: 16686
+    - name: ui
+      port: 16686
       targetPort: 16686
       nodePort: 31686
+    - name: collector-http
+      port: 14268
+      targetPort: 14268
+    - name: otlp-grpc
+      port: 4317
+      targetPort: 4317
