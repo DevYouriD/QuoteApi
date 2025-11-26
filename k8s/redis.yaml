@@ -5,6 +5,8 @@ kind: Deployment
 metadata:
   name: redis
   namespace: quote-api-namespace
+  labels:
+    app: redis
 spec:
   replicas: 1
   selector:
@@ -18,14 +20,16 @@ spec:
       containers:
         - name: redis
           image: redis:latest
+          imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 6379
+            - protocol: TCP
+              containerPort: 6379
           resources:
             requests:
-              memory: 128Mi
+              memory: 64Mi
               cpu: 100m
             limits:
-              memory: 256Mi
+              memory: 128Mi
               cpu: 200m
 ---
 
@@ -36,10 +40,13 @@ kind: Service
 metadata:
   name: redis
   namespace: quote-api-namespace
+  labels:
+    app: redis
 spec:
   type: ClusterIP
   selector:
     app: redis
   ports:
-    - port: 6379
+    - name: redis
+      port: 6379
       targetPort: 6379

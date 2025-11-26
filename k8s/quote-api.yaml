@@ -23,13 +23,14 @@ spec:
 
         - name: wait-for-redis
           image: busybox
-          command: [ 'sh', '-c', 'until nc -z redis 6379; do echo waiting for redis; sleep 2; done;' ]
+          command: [ 'sh', '-c', 'until nc -z redis 6379; do echo waiting for redis; sleep 5; done;' ]
       containers:
         - name: quote-api
           image: devyourid/quote-api:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080
+            - protocol: TCP
+              containerPort: 8080
           env:
             - name: SPRING_DATASOURCE_URL
               value: jdbc:mysql://mysql.quote-api-namespace.svc.cluster.local:3306/quotedb?useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true
@@ -47,7 +48,7 @@ spec:
               value: "8080"
             # REDIS
             - name: SPRING_REDIS_HOST
-              value: redis.quote-api-namespace.svc.cluster.local
+              value: "redis"
             - name: SPRING_REDIS_PORT
               value: "6379"
           resources:

@@ -1,6 +1,7 @@
 // Dependency versions
 val lombokVersion = "1.18.42"
 val mapstructVersion = "1.6.3"
+val jedisVersion = "5.1.2"
 val plantUmlVersion = "8059"
 val mysqlConnectorVersion = "8.0.33"
 val h2Version = "2.4.240"
@@ -39,7 +40,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${openApiVersion}")
+    implementation("redis.clients:jedis:$jedisVersion")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$openApiVersion")
     compileOnly("org.projectlombok:lombok:$lombokVersion")
     annotationProcessor("org.projectlombok:lombok:$lombokVersion")
     implementation("org.mapstruct:mapstruct:$mapstructVersion")
@@ -52,11 +54,11 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
     // DATA STORAGE
-    implementation("mysql:mysql-connector-java:${mysqlConnectorVersion}")
-    runtimeOnly("com.h2database:h2:${h2Version}")
+    implementation("mysql:mysql-connector-java:$mysqlConnectorVersion")
+    runtimeOnly("com.h2database:h2:$h2Version")
 
     // DOCUMENTATION
-    implementation("net.sourceforge.plantuml:plantuml:${plantUmlVersion}")
+    implementation("net.sourceforge.plantuml:plantuml:$plantUmlVersion")
 
     // TEST
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
