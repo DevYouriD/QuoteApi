@@ -1,9 +1,10 @@
 // Dependency versions
-val lombokVersion = "1.18.38"
+val lombokVersion = "1.18.42"
 val mapstructVersion = "1.6.3"
 val plantUmlVersion = "8059"
 val mysqlConnectorVersion = "8.0.33"
-val h2Version = "2.3.232"
+val h2Version = "2.4.240"
+val openApiVersion = "2.8.13"
 
 plugins {
 	java
@@ -37,6 +38,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${openApiVersion}")
     compileOnly("org.projectlombok:lombok:$lombokVersion")
     annotationProcessor("org.projectlombok:lombok:$lombokVersion")
     implementation("org.mapstruct:mapstruct:$mapstructVersion")

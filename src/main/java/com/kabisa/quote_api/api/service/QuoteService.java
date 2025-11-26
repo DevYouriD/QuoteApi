@@ -5,6 +5,7 @@ import com.kabisa.quote_api.api.model.dto.QuoteRequestDto;
 import com.kabisa.quote_api.api.model.dto.QuoteWithRating;
 import com.kabisa.quote_api.api.model.entity.RatedQuote;
 import com.kabisa.quote_api.api.repository.RatedQuoteRepository;
+import com.kabisa.quote_api.api.utility.QuoteUtils;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -17,18 +18,29 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class QuoteService {
 
-    private RatedQuoteRepository ratedQuoteRepository;
-    private DummyJsonQuoteService dummyJsonQuoteService;
-    private ZenQuoteService zenQuoteService;
+    private final RatedQuoteRepository ratedQuoteRepository;
+    private final DummyJsonQuoteService dummyJsonQuoteService;
+    private final ZenQuoteService zenQuoteService;
 
     public Quote getRandomQuote() {
 
-        CompletableFuture<Quote> dummyJsonQuote = dummyJsonQuoteService.getRandomQuote();
-        CompletableFuture<Quote> zenQuote = zenQuoteService.getRandomQuote();
+        // Return null if getRandomQuote fails
+        CompletableFuture<Quote> dummyQuote = dummyJsonQuoteService.getRandomQuote().exceptionally(ex -> null);
+        CompletableFuture<Quote> zenQuote = zenQuoteService.getRandomQuote().exceptionally(ex -> null);
 
-        return CompletableFuture.anyOf(dummyJsonQuote, zenQuote)
-                .thenApply(Quote.class::cast)
-                .join();
+        // Return fastest result if not null
+        Quote fastest = dummyQuote.applyToEither(zenQuote, q -> q).join();
+        if (fastest != null) return fastest;
+
+        // Return slower result if fastest result fails
+        Quote dummyResult = dummyQuote.join();
+        if (dummyResult != null) return dummyResult;
+
+        Quote zenResult = zenQuote.join();
+        if (zenResult != null) return zenResult;
+
+        // Generic return if both fastest and slower are null
+        return QuoteUtils.fallback(new RuntimeException("Both APIs failed"));
     }
 
     @Transactional
