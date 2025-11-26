@@ -12,10 +12,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      IS_MAIN_BRANCH: ${{ github.ref == 'refs/heads/main' }}
-
     steps:
+
+      # ----- APPLICATION STEPS ----- #
+
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -56,18 +56,48 @@ jobs:
 #          name: test-results
 #          path: build/reports/tests/test
 
+      # ----- DOCKER STEPS ----- #
+
       - name: Log in to Docker Hub
-        if: env.IS_MAIN_BRANCH == 'true'
+        if: github.ref == 'refs/heads/main'
         run: |
           echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login \
             -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
       - name: Build Docker image
-        if: env.IS_MAIN_BRANCH == 'true'
+        if: github.ref == 'refs/heads/main'
         run: |
           docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/quote-api:latest .
 
       - name: Push Docker image
-        if: env.IS_MAIN_BRANCH == 'true'
+        if: github.ref == 'refs/heads/main'
         run: |
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/quote-api:latest
+
+      # ----- KUBERNETES STEPS ----- #
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Get GKE credentials
+        uses: google-github-actions/get-gke-credentials@v1
+        with:
+          cluster_name: my-cluster-name
+          location: us-central1
+          project_id: my-gcp-project-id
+
+      - name: Deploy to Google Cloud Kubernetes Cluster
+        if: github.ref == 'refs/heads/main'
+        run: |
+          kubectl apply -f k8s/jaeger.yaml
+          kubectl apply -f k8s/mysql.yaml
+          kubectl apply -f k8s/otel.yaml
+          kubectl apply -f k8s/quote-api.yaml
+          kubectl apply -f k8s/redis.yaml
+
+      - name: Wait for Application rollout
+        if: github.ref == 'refs/heads/main'
+        run: |
+          kubectl rollout status deployment/quote-api -n quote-api-namespace
