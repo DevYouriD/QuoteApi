@@ -84,9 +84,9 @@ jobs:
       - name: Get GKE credentials
         uses: google-github-actions/get-gke-credentials@v1
         with:
-          cluster_name: my-cluster-name
-          location: us-central1
-          project_id: my-gcp-project-id
+          cluster_name: quote-api-cluster
+          location: europe-west4
+          project_id: quote-api-478722
 
       - name: Deploy to Google Cloud Kubernetes Cluster
         if: github.ref == 'refs/heads/main'
