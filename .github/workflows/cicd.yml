@@ -97,6 +97,11 @@ jobs:
           kubectl apply -f k8s/quote-api.yaml
           kubectl apply -f k8s/redis.yaml
 
+      - name: Force rollout of API
+        if: github.ref == 'refs/heads/main'
+        run: |
+          kubectl rollout restart deployment/quote-api -n quote-api-namespace
+
       - name: Wait for Application rollout
         if: github.ref == 'refs/heads/main'
         run: |
