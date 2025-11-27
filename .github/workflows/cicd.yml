@@ -88,21 +88,37 @@ jobs:
           location: europe-west4
           project_id: quote-api-478722
 
-      - name: Deploy to Google Cloud Kubernetes Cluster
+      - name: Apply supporting Kubernetes manifests
         if: github.ref == 'refs/heads/main'
         run: |
           kubectl apply -f k8s/jaeger.yaml
           kubectl apply -f k8s/mysql.yaml
           kubectl apply -f k8s/otel.yaml
-          kubectl apply -f k8s/quote-api.yaml
           kubectl apply -f k8s/redis.yaml
 
-      - name: Force rollout of API
-        if: github.ref == 'refs/heads/main'
-        run: |
-          kubectl rollout restart deployment/quote-api -n quote-api-namespace
+      # ----- BLUE/GREEN DEPLOYMENT OF THE API ----- #
 
-      - name: Wait for Application rollout
+      - name: Determine color
+        id: determine-color
+        run: |
+          CURRENT_COLOR=$(kubectl get svc quote-api -n quote-api-namespace -o jsonpath='{.spec.selector.app}')
+          if [ "$CURRENT_COLOR" = "quote-api-blue" ]; then
+            echo "new_color=green" >> $GITHUB_OUTPUT
+          else
+            echo "new_color=blue" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy new color
         if: github.ref == 'refs/heads/main'
         run: |
-          kubectl rollout status deployment/quote-api -n quote-api-namespace
+          NEW_COLOR="${{ steps.determine-color.outputs.new_color }}"
+          kubectl apply -f k8s/quote-api-${NEW_COLOR}.yaml
+          kubectl set image deployment/quote-api-${NEW_COLOR} quote-api=${{ secrets.DOCKER_HUB_USERNAME }}/quote-api:latest -n quote-api-namespace
+          kubectl rollout status deployment/quote-api-${NEW_COLOR} -n quote-api-namespace
+
+      - name: Switch service to new color
+        if: github.ref == 'refs/heads/main'
+        run: |
+          NEW_COLOR="${{ steps.determine-color.outputs.new_color }}"
+          kubectl patch svc quote-api -n quote-api-namespace \
+            -p "{\"spec\": {\"selector\": {\"app\": \"quote-api-${NEW_COLOR}\"}}}"
