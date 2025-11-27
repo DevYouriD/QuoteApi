@@ -1,0 +1,20 @@
+@startuml
+actor Developer
+
+' Develop Flow
+Developer -> GitHub : push feature / develop branch
+GitHub -> "CI Workflow" : trigger workflow
+"CI Workflow" -> Gradle : build & test
+Gradle --> "CI Workflow" : test results
+
+' Deployment Flow
+Developer -> GitHub : merge develop -> main
+GitHub -> "CI Workflow" : trigger workflow
+"CI Workflow" -> Gradle : build & test
+Gradle --> "CI Workflow" : test results
+"CI Workflow" -> Docker : build image
+Docker -> DockerHub : push image
+"CI Workflow" -> GKE : deploy to cluster
+GKE -> Pods : apply k8s manifests
+
+@enduml

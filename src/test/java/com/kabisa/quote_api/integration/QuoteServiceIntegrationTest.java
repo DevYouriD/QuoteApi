@@ -1,4 +1,4 @@
-package com.kabisa.quote_api;
+package com.kabisa.quote_api.integration;
 
 import com.kabisa.quote_api.api.model.dto.QuoteRequestDto;
 import com.kabisa.quote_api.api.model.dto.QuoteWithRating;
@@ -38,7 +38,7 @@ class QuoteServiceIntegrationTest {
     }
 
     @Test
-    void testRateQuote_affectsTopRated() {
+    void testRateQuoteAffectsTopRated() {
         QuoteRequestDto quote = new QuoteRequestDto("Quote C", "Author C", 5);
         quoteService.rateQuote(quote);
 

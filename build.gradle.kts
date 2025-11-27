@@ -47,9 +47,6 @@ dependencies {
     implementation("org.mapstruct:mapstruct:$mapstructVersion")
     annotationProcessor("org.mapstruct:mapstruct-processor:$mapstructVersion")
 
-    // SECURITY
-    // implementation("org.springframework.boot:spring-boot-starter-security")
-
     // FRONTEND
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 

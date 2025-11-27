@@ -31,9 +31,15 @@ public class QuoteRestController {
     }
 
     @PostMapping("/rate")
-    public ResponseEntity<QuoteWithRating> rateQuote(@RequestBody QuoteRequestDto quote){
-        QuoteWithRating quoteWithRating = quoteService.rateQuote(quote);
-        return ResponseEntity.ok(quoteWithRating);
+    public ResponseEntity<Object> rateQuote(@RequestBody QuoteRequestDto quote){
+        try{
+            QuoteWithRating quoteWithRating = quoteService.rateQuote(quote);
+            return ResponseEntity.ok(quoteWithRating);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(ex.getMessage());
+        }
     }
 
     @GetMapping("/top-rated")

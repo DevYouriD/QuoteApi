@@ -1,4 +1,4 @@
-package com.kabisa.quote_api;
+package com.kabisa.quote_api.unit;
 
 import com.kabisa.quote_api.api.model.dto.Quote;
 import com.kabisa.quote_api.api.model.dto.QuoteRequestDto;
@@ -67,7 +67,7 @@ class QuoteServiceTest {
     }
 
     @Test
-    void testShouldReturnFallback_whenBothAPIsFail() {
+    void testShouldReturnFallbackWhenBothAPIsFail() {
         quoteService = new QuoteService(repository, dummyService, zenService);
         Quote fallback = QuoteUtils.fallback(new RuntimeException("test"));
 
@@ -83,7 +83,7 @@ class QuoteServiceTest {
     }
 
     @Test
-    void testRateQuote_existingQuote() {
+    void testRateQuoteOnExistingQuote() {
         String quoteText = "Test quote";
         String author = "Author";
         QuoteRequestDto quote = getQuoteDTO(quoteText, author);
@@ -102,7 +102,7 @@ class QuoteServiceTest {
     }
 
     @Test
-    void testRateQuote_newQuote() {
+    void testRateQuoteNewQuote() {
         String quoteText = "New quote";
         String author = "Author";
         QuoteRequestDto quote = getQuoteDTO(quoteText, author);

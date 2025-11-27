@@ -1,0 +1,49 @@
+@startuml
+!define RECTANGLE class
+skinparam componentStyle rectangle
+skinparam linetype ortho
+
+actor User
+
+' Frontend
+component "Frontend" as Frontend
+
+' Jaeger
+component "Jaeger" as Jaeger
+
+' OpentTelemetry
+component "Otel" as Otel
+
+' Redis
+component "Redis" as Redis
+
+' Quote Service
+component "QuoteService" as Service
+
+' DummyJsonQuoteService with embedded Redis
+package "DummyJsonQuoteService" as Dummy {
+    component "Redis / Rate Limiter" as DummyRedis
+}
+
+' ZenQuoteService with embedded Redis
+package "ZenQuoteService" as Zen {
+    component "Redis / Rate Limiter" as ZenRedis
+}
+
+' Layout hints
+Frontend -down-> Service
+Service -down-> Frontend
+Service -down-> Dummy
+Dummy -down-> Service
+Dummy -up-> Redis
+Service -down-> Zen
+Zen -down-> Service
+Zen -up-> Redis
+
+Service -up-> "Otel"
+Otel -up-> "Jaeger"
+
+' User interactions
+User -left-> Frontend
+
+@enduml

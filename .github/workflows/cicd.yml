@@ -1,4 +1,4 @@
-name: Quote API CI
+name: Quote API CI/CD
 
 on:
   push:
@@ -38,23 +38,6 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew clean build --no-daemon
-        # run: ./gradlew clean build -x pmdMain -x pmdTest -x checkstyleMain -x checkStyleTest -x jacocoTestReport --no-daemon
-
-      # Run PMD
-      #      - name: Run PMD
-      #        run: ./gradlew pmdMain --no-daemon
-
-      # Run Checkstyle
-      #      - name: Run Checkstyle
-      #        run: ./gradlew checkstyleMain --no-daemon
-
-      # Upload test results (optional)
-#      - name: Archive test results
-#        if: always()
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: test-results
-#          path: build/reports/tests/test
 
       # ----- DOCKER STEPS ----- #
 
@@ -77,11 +60,13 @@ jobs:
       # ----- KUBERNETES STEPS ----- #
 
       - name: Authenticate to GCP
+        if: github.ref == 'refs/heads/main'
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Get GKE credentials
+        if: github.ref == 'refs/heads/main'
         uses: google-github-actions/get-gke-credentials@v1
         with:
           cluster_name: quote-api-cluster
@@ -99,6 +84,7 @@ jobs:
       # ----- BLUE/GREEN DEPLOYMENT OF THE API ----- #
 
       - name: Determine color
+        if: github.ref == 'refs/heads/main'
         id: determine-color
         run: |
           CURRENT_COLOR=$(kubectl get svc quote-api -n quote-api-namespace -o jsonpath='{.spec.selector.app}')

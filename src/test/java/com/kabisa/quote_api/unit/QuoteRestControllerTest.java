@@ -1,4 +1,4 @@
-package com.kabisa.quote_api;
+package com.kabisa.quote_api.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kabisa.quote_api.api.controller.QuoteRestController;
@@ -36,7 +36,7 @@ class QuoteRestControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void getRandomQuote_returnsQuote() throws Exception {
+    void getRandomQuoteReturnsQuote() throws Exception {
         Quote quote = new Quote("Test quote", "Author");
         when(quoteService.getRandomQuote()).thenReturn(quote);
 
@@ -47,7 +47,7 @@ class QuoteRestControllerTest {
     }
 
     @Test
-    void rateQuote_returnsQuoteWithRating() throws Exception {
+    void rateQuoteReturnsQuoteWithRating() throws Exception {
         QuoteRequestDto request = new QuoteRequestDto("Hello world", "Author", 5);
         QuoteWithRating response = QuoteWithRating.builder()
                 .quote("Hello world")
@@ -67,7 +67,7 @@ class QuoteRestControllerTest {
     }
 
     @Test
-    void getTopRatedQuotes_returnsListOfQuotes() throws Exception {
+    void getTopRatedQuotesReturnsListOfQuotes() throws Exception {
         List<QuoteWithRating> topQuotes = List.of(
                 QuoteWithRating.builder().quote("Quote 1").author("Author 1").avgRating(4.7).build(),
                 QuoteWithRating.builder().quote("Quote 2").author("Author 2").avgRating(4.5).build()

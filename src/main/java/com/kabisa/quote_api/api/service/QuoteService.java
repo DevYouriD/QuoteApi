@@ -45,6 +45,9 @@ public class QuoteService {
 
     @Transactional
     public QuoteWithRating rateQuote(QuoteRequestDto quote) {
+        if (quote.starRating() < 1 || quote.starRating() > 5) {
+            throw new IllegalArgumentException("Quote rating must be between 1 and 5");
+        }
         RatedQuote savedQuote = ratedQuoteRepository.findByQuoteAndAuthor(quote.quote(), quote.author())
                 .map(existing -> {
                     existing.setTotalRating(existing.getTotalRating() + quote.starRating());
