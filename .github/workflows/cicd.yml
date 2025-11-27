@@ -112,7 +112,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           NEW_COLOR="${{ steps.determine-color.outputs.new_color }}"
-          kubectl apply -f k8s/quote-api-${NEW_COLOR}.yaml
+          kubectl apply -f k8s/quote-api.yaml -n quote-api-namespace
           kubectl set image deployment/quote-api-${NEW_COLOR} quote-api=${{ secrets.DOCKER_HUB_USERNAME }}/quote-api:latest -n quote-api-namespace
           kubectl rollout status deployment/quote-api-${NEW_COLOR} -n quote-api-namespace
 
