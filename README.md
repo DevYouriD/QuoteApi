@@ -15,6 +15,7 @@ them to Docker Hub, and performing blue/green deployments to a Kubernetes cluste
 - [Project Overview](#project-overview)
 - [Code Flow & Deployment](#code-flow--deployment)
 - [Tech Stack](#tech-stack)
+- [How to Run](#how-to-run)
 
 ---
 
@@ -78,3 +79,25 @@ them to Docker Hub, and performing blue/green deployments to a Kubernetes cluste
 - Kubernetes (GKE)
 - GitHub Actions (CI/CD)
 - Gradle (Kotlin)
+
+---
+
+## How to Run
+1. Clone the repository:
+```bash
+git clone https://github.com/DevYouriD/QuoteApi.git
+```
+
+2. Move into the root directory:
+```bash
+cd QuoteApi
+```
+
+3. Run docker-compose:
+```bash
+docker-compose up --build
+```
+
+4. Access the Frontend: http://localhost:8080
+    - You can also query the API via Swagger at:
+       http://localhost:8080/swagger-ui/index.html
