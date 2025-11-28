@@ -16,21 +16,26 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static com.kabisa.quote_api.api.utility.Constants.GET_RANDOM_QUOTE_PATH;
+import static com.kabisa.quote_api.api.utility.Constants.GET_TOP_RATED_QUOTES_PATH;
+import static com.kabisa.quote_api.api.utility.Constants.RATE_QUOTE_PATH;
+import static com.kabisa.quote_api.api.utility.Constants.REST_BASE_PATH;
+
 @RestController
 @Getter @Setter
 @AllArgsConstructor
-@RequestMapping("/api/v1/quote")
+@RequestMapping(REST_BASE_PATH)
 public class QuoteRestController {
 
     private final QuoteService quoteService;
 
-    @GetMapping("/random")
+    @GetMapping(GET_RANDOM_QUOTE_PATH)
     public ResponseEntity<Quote> getRandomQuote() {
         Quote quote = quoteService.getRandomQuote();
         return ResponseEntity.ok(quote);
     }
 
-    @PostMapping("/rate")
+    @PostMapping(RATE_QUOTE_PATH)
     public ResponseEntity<Object> rateQuote(@RequestBody QuoteRequestDto quote){
         try{
             QuoteWithRating quoteWithRating = quoteService.rateQuote(quote);
@@ -42,7 +47,7 @@ public class QuoteRestController {
         }
     }
 
-    @GetMapping("/top-rated")
+    @GetMapping(GET_TOP_RATED_QUOTES_PATH)
     public ResponseEntity<List<QuoteWithRating>> getTopRatedQuotes() {
         List<QuoteWithRating> topQuotes = quoteService.getHighestRatedQuotes();
         return ResponseEntity.ok(topQuotes);
