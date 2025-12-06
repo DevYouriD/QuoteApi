@@ -60,7 +60,7 @@ spec:
               cpu: 500m
 ---
 
-########## Quote API (BLUE) Deployment ##########
+########## Quote API (GREEN) Deployment ##########
 
 apiVersion: apps/v1
 kind: Deployment

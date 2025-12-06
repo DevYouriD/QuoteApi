@@ -54,6 +54,9 @@ them to Docker Hub, and performing blue/green deployments to a Kubernetes cluste
 - Add E2E tests
 - Secure endpoints (JWT Authentication)
 - Full CRUD on stored data (Delete/ Update)
+- Process edge-cases
+- Profile bound config (test, develop, etc.)
+- Performance optimization
 
 ---
 
