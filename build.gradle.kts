@@ -13,7 +13,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.7"
 }
 
-group = "com.kabisa"
+group = "com.example"
 version = "0.0.1-SNAPSHOT"
 description = "Quote Api"
 

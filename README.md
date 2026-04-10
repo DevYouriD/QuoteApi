@@ -1,12 +1,12 @@
 # Quote API
 
-This project serves as a demo for the Kabisa coding assignment and consists of two parts.
+This project consists of two parts.
 
 The first part features a Java Spring-Boot API that fetches random quotes from two external APIs, returns the
 fastest response, deals with errors, applies rate-limiting and much more.
 
-The second part of the assignment is a CI/CD pipeline implemented with GitHub Actions.
-It automates building and testing the application, generating Docker images, pushing
+The second part of the project focuses on CI/CD implemented with GitHub Actions.
+The pipeline automates building and testing the application, generating Docker images, pushing
 them to Docker Hub, and performing blue/green deployments to a Kubernetes cluster in Google Cloud.
 
 ---
